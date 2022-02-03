@@ -1,45 +1,30 @@
-{
-    "events": [{
-            "deviceName": "countcamera1",
-            "profileName": "camera-monitor-profile",
-            "sourceName": "HumanCount",
-            "id": "id",
-            "origin": 1602168089665565200,
-            "readings": [{
-                    "id": "id",
-                    "origin": 1602168089665565202,
-                    "deviceName": "countcamera1",
-                    "resourceName": "HumanCount",
-                    "profileName": "camera-monitor-profile",
-                    "valueType": "Int16",
-                    "value": "5"
-                },
-                {
-                    "id": "id",
-                    "origin": 1602168089665565202,
-                    "deviceName": "countcamera1",
-                    "resourceName": "CanineCount",
-                    "profileName": "camera-monitor-profile",
-                    "valueType": "Int16",
-                    "value": "8"
-                }
-            ]
-        },
-        {
-            "deviceName": "Random-Integer-Device",
-            "profileName": "Random-Integer-Device",
-            "sourceName": "Int64",
-            "id": "id",
-            "origin": 1602168089665565200,
-            "readings": [{
-                "id": "id",
-                "origin": 1602168089665565202,
-                "deviceName": "Random-Integer-Device",
-                "resourceName": "Int64",
-                "profileName": "Random-Integer-Device",
-                "valueType": "Int64",
-                "value": "-1769805107234189082"
-            }]
-        }
-    ]
-}
+[
+    {
+        "time": 2,
+        "deviceName": "countcamera1",
+        "profileName": "camera-monitor-profile",
+        "sourceName": "HumanCount",
+        "readings": [{
+                "resourceName": "HumanCount",
+                "valueType": "Int16",
+                "value": "5"
+            },
+            {
+                "resourceName": "CanineCount",
+                "valueType": "Int16",
+                "value": "8"
+            }
+        ]
+    },
+    {
+        "time": 1,
+        "deviceName": "Random-Integer-Device",
+        "profileName": "Random-Integer-Device",
+        "sourceName": "Int64",
+        "readings": [{
+            "resourceName": "Int64",
+            "valueType": "Int64",
+            "value": "-1769805107234189084"
+        }]
+    }
+]
