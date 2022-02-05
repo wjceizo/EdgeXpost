@@ -1,10 +1,13 @@
-from base_sensore import createSensore, addReading, randomId, postToEdgex
+from base_sensore import createSensore, addReading, randomId, postToEdgex,cys
 import csv
 import time
 import random
+import sys
 
+#默认的csv为当前目录下test.csv，默认的ip_host为localhost:59880
+open_csv,ip_host = cys(sys.argv[1:])
 
-with open("test.csv", "r", encoding="utf-8") as f:
+with open(open_csv, "r", encoding="utf-8") as f:
     reader = csv.reader(f)
     fieldnames = next(reader)  
     csv_reader = csv.DictReader(
@@ -20,16 +23,17 @@ for event in events:
     event["time"] = int(event["time"])
 events = sorted(events, key=lambda i: i["time"])
 # print(events)
-
-
+edgex_url = "http://" + ip_host + "/api/v2/event/"
 eventslength = len(events)
-for (
-    i,
-    event,
-) in enumerate(events):
+
+init_time = time.perf_counter()
+
+time.sleep(events[0]["time"])
+
+for (i,event) in enumerate(events):
     timens = time.time_ns()
-    if event["time"] == events[i - 1]["time"] and i > 0:
-        # print("重复")
+    if event["time"] == events[i - 1]["time"] and event["deviceName"] == events[i - 1]["deviceName"] and event["profileName"] == events[i - 1]["profileName"] and  i > 0:
+        # print("repeat this event")
         # print(event["deviceName"])
         sensore = addReading(
             sensore,
@@ -41,32 +45,23 @@ for (
             event["valueType"],
             event["value"],
         )
-        if i + 1 < eventslength:
-            if event["time"] != events[i + 1]["time"]:
-                url = (
-                    "http://localhost:59880/api/v2/event/"
-                    + event["profileName"]
-                    + "/"
-                    + event["deviceName"]
-                    + "/"
-                    + event["sourceName"]
-                )
+        if i  < eventslength -1:
+            if event["deviceName"] != events[i + 1]["deviceName"] or event["profileName"] != events[i + 1]["profileName"] or event["time"] != events[i + 1]["time"] :
+                url = (edgex_url + event["profileName"] + "/" + event["deviceName"] + "/" + event["sourceName"])
+                start = time.perf_counter()
+                print("Time:"+str(round((time.perf_counter()-init_time),2)))
                 postToEdgex(sensore, url)
-                time.sleep(1)
+                end = time.perf_counter()
+                post_time = round(end - start , 2)
+                sleep_time = events[i + 1]["time"] - (time.perf_counter()-init_time)  if (events[i + 1]["time"] - (time.perf_counter()-init_time)) > 0 else 0
+                time.sleep(sleep_time)
         elif i == eventslength - 1:
-            url = (
-                "http://localhost:59880/api/v2/event/"
-                + event["profileName"]
-                + "/"
-                + event["deviceName"]
-                + "/"
-                + event["sourceName"]
-            )
+            url = (edgex_url + event["profileName"] + "/" + event["deviceName"] + "/" + event["sourceName"])
+            print("Time:"+str(round((time.perf_counter()-init_time),2)))
             postToEdgex(sensore, url)
-            time.sleep(1)
 
     else:
-        # print("新开一个")
+        # print("new event")
         # print(event["deviceName"])
         sensore = event["deviceName"]
         sensore = createSensore(
@@ -86,26 +81,18 @@ for (
             event["valueType"],
             event["value"],
         )
-        if i + 1 < eventslength:
-            if event["time"] != events[i + 1]["time"]:
-                url = (
-                    "http://localhost:59880/api/v2/event/"
-                    + event["profileName"]
-                    + "/"
-                    + event["deviceName"]
-                    + "/"
-                    + event["sourceName"]
-                )
+        if i  < eventslength -1:
+            if event["deviceName"] != events[i + 1]["deviceName"] or event["profileName"] != events[i + 1]["profileName"] or event["time"] != events[i + 1]["time"]:
+                url = (edgex_url + event["profileName"] + "/" + event["deviceName"] + "/" + event["sourceName"])
+                start = time.perf_counter()
+                print("Time:"+str(round((time.perf_counter()-init_time),2)))
                 postToEdgex(sensore, url)
-                time.sleep(1)
+                end = time.perf_counter()
+                post_time = round(end - start , 2)
+                sleep_time = events[i + 1]["time"] - (time.perf_counter()-init_time)  if (events[i + 1]["time"] - (time.perf_counter()-init_time)) > 0 else 0
+                time.sleep(sleep_time)
         elif i == eventslength - 1:
-            url = (
-                "http://localhost:59880/api/v2/event/"
-                + event["profileName"]
-                + "/"
-                + event["deviceName"]
-                + "/"
-                + event["sourceName"]
-            )
+            url = (edgex_url + event["profileName"] + "/" + event["deviceName"] + "/" + event["sourceName"])
+            print("Time:"+str(round((time.perf_counter()-init_time),2)))
             postToEdgex(sensore, url)
-            time.sleep(1)
+
